@@ -2,5 +2,23 @@
 
 /messaging-app-backend/node_modules
 /messaging-app-backend/.env
+/messaging-app-backend/node_modules
 
 # React
+
+/messaging-app-frontend/node_modules
+/messaging-app-frontend/build
+/messaging-app-frontend/.env
+
+# Logs
+
+logs
+_.log
+npm-debug.log_
+yarn-debug.log*
+yarn-error.log*
+
+# OS generated files
+
+.DS_Store
+Thumbs.db
