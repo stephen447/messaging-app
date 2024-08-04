@@ -2,6 +2,7 @@ import express from 'express';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 import cors from 'cors';
+import dbConnection from './db.js'
 
 const app = express(); // Express app
 const server = createServer(app);
@@ -22,9 +23,13 @@ const io = new Server(server, {
   },
 });
 
+// Testing the connection to the database
+dbConnection.sync({ force: true }).then(() => {
+  console.log('Database & tables created!');
+});
+
 // Define the port to run the server on
 const PORT = process.env.PORT || 5001;
-
 // Event listener for new connections
 io.on('connection', (socket) => {
   console.log('New client connected');
