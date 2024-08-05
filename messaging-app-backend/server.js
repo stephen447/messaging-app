@@ -3,7 +3,7 @@ import { createServer } from 'http';
 import { Server } from 'socket.io';
 import cors from 'cors';
 import dbConnection from './db.js'
-import user from './routes/user.js'
+import user from "./routes/user.js";
 
 const app = express(); // Express app
 const server = createServer(app);
@@ -15,6 +15,11 @@ const corsOptions = {
 };
 // Enable CORS
 app.use(cors(corsOptions));
+// Middleware to parse JSON bodies
+app.use(express.json());
+// Middleware to parse URL-encoded bodies
+app.use(express.urlencoded({ extended: true }));
+// Use the user routes for requests to /user
 app.use(user);
 
 // Create a new instance of the socket.io server
