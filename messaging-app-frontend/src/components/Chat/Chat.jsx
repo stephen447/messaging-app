@@ -59,9 +59,17 @@ const Chat = () => {
 
   const sendMessage = () => {
     console.log("Sending Message");
+    const testUserId = 1;
     if (socket) {
       // Send message to server
-      socket.emit("message", message);
+      const messageObj = {
+        content: message,
+        userId: testUserId, // Include the test user ID here
+        endUserID: 2,
+      };
+
+      // Send message to server
+      socket.emit("message", messageObj);
       // Reset message input
       setMessage("");
     }

@@ -4,7 +4,7 @@ import * as user from "../controllers/user.js";
 const router = express.Router();
 
 // Create User
-router.post("/v1/createUser", async (req, res) => {
+router.post("/user/v1/createUser", async (req, res) => {
 	// Get the username from the body
     const username = req.body.username;
     // Check if it already exists in the database
@@ -18,7 +18,7 @@ router.post("/v1/createUser", async (req, res) => {
 });
 
 // Get all users
-router.get("/v1/getAllUsers", async (req, res) => {
+router.get("/user/v1/getAllUsers", async (req, res) => {
     // Get all users from the database
     const users = await user.getAllUsers();
     // Return the list of users

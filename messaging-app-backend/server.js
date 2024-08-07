@@ -4,6 +4,7 @@ import { Server } from 'socket.io';
 import cors from 'cors';
 import dbConnection from './db.js'
 import user from "./routes/user.js";
+import * as Message from "./controllers/message.js";
 
 const app = express(); // Express app
 const server = createServer(app);
@@ -41,9 +42,18 @@ const PORT = process.env.PORT || 5001;
 io.on('connection', (socket) => {
   console.log('New client connected');
   // Event listener for messages
-  socket.on('message', (message) => {
-    console.log(`Message received: ${message}`);
-    io.emit('message', message);
+  socket.on('message', async (message) => {
+    try {
+      console.log(`Message received: ${message.content}`);
+      
+      // Save message to the database
+      const newMessage = await Message.createMessage(message.content, message.userId, message.endUserID);
+
+      // Emit the saved message to all connected clients
+      io.emit('message', newMessage.message);
+    } catch (error) {
+      console.error('Error saving message:', error);
+    }
   });
   // Event listener for disconnections
   socket.on('disconnect', () => {
