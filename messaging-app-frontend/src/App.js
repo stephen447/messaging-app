@@ -1,10 +1,12 @@
 import logo from './logo.svg';
 import './App.css';
-import Chat from './components/Chat/Chat';
+import Routes from './routes';
 
 function App() {
   return (
-    <Chat/>
+    <>
+      <Routes />
+    </>
   );
 }
 

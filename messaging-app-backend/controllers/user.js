@@ -12,7 +12,11 @@ export async function getAllUsers() {
         const users = await User.findAll();
         
         // Extract usernames from the list of users
-        const userNames = users.map(user => user.username);
+        const userNames = users.map(user => ({
+            id: user.id,
+            username: user.username
+          }));
+          
         
         return {status: 200, message: 'Users retrieved successfully', data: userNames};
     } catch (error) {

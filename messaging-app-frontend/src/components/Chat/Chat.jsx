@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { io } from "socket.io-client";
+import { userStore } from "../../UserStore";
 
 const Chat = () => {
   // State variables for the message input and messages
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const [socket, setSocket] = useState(null);
+  // Get the current user and the reciepient user from the user store
+  const currentUser = userStore.getCurrentUser;
+  const reciepientUser = userStore.getReciepientUser;
 
   useEffect(() => {
     // Establish socket connection
@@ -22,6 +26,7 @@ const Chat = () => {
     // Add event listeners for the socket
     newSocket.on("connect", () => {
       console.log("Connected to server");
+      registerUser(currentUser.id); // Register the test user ID here
     });
 
     newSocket.on("disconnect", () => {
@@ -48,8 +53,13 @@ const Chat = () => {
     newSocket.on("message", (message) => {
       console.log("Message Received");
       // Add message to list of previous messages
-      setMessages((prevMessages) => [...prevMessages, message]);
+      //setMessages((prevMessages) => [...prevMessages, message]);
+      console.log(message);
     });
+    // Register the user with their user ID
+    const registerUser = (userId) => {
+      newSocket.emit("register", userId);
+    };
 
     // Cleanup on unmount
     return () => {
@@ -59,13 +69,12 @@ const Chat = () => {
 
   const sendMessage = () => {
     console.log("Sending Message");
-    const testUserId = 1;
     if (socket) {
       // Send message to server
       const messageObj = {
         content: message,
-        userId: testUserId, // Include the test user ID here
-        endUserID: 2,
+        userId: currentUser.id, // Include the test user ID here
+        endUserID: reciepientUser.id,
       };
 
       // Send message to server

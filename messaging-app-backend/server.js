@@ -12,7 +12,7 @@ const server = createServer(app);
 // CORS configuration - allow requests from your frontend server
 const corsOptions = {
   origin: 'http://localhost:3000',  // Allow requests from your frontend server
-  optionsSuccessStatus: 200,        // Some legacy browsers choke on 204
+  optionsSuccessStatus: 200,        
 };
 // Enable CORS
 app.use(cors(corsOptions));
@@ -22,6 +22,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 // Use the user routes for requests to /user
 app.use(user);
+// User connection map
+const userConnections = {};
 
 // Create a new instance of the socket.io server
 const io = new Server(server, {
@@ -35,29 +37,52 @@ const io = new Server(server, {
 dbConnection.sync({ force: true }).then(() => {
   console.log('Database & tables created!');
 });
-
 // Define the port to run the server on
 const PORT = process.env.PORT || 5001;
+
 // Event listener for new connections
 io.on('connection', (socket) => {
   console.log('New client connected');
-  // Event listener for messages
-  socket.on('message', async (message) => {
-    try {
-      console.log(`Message received: ${message.content}`);
-      
-      // Save message to the database
-      const newMessage = await Message.createMessage(message.content, message.userId, message.endUserID);
+  // Store user's socket ID by their user ID
+  socket.on('register', (userId) => {
+    userConnections[userId] = socket.id;
+    console.log(`User ${userId} connected with socket ID ${socket.id}`);
+  });
 
-      // Emit the saved message to all connected clients
-      io.emit('message', newMessage.message);
+  // Handle incoming messages
+  socket.on('message', async (data) => {
+    const content = data.content;
+    const fromUserId = data.userId;
+    const toUserId = data.endUserID;
+    console.log(`Message from ${fromUserId} to ${toUserId}: ${content}`);
+    try {
+      const response = await Message.createMessage(content, fromUserId, toUserId);
+      if (response.status === 201) {
+        const recipientSocketId = userConnections[toUserId];
+        if (recipientSocketId) {
+          io.to(recipientSocketId).emit('message', response.data); // Send message to specific user
+        } else {
+          console.log(`User ${toUserId} is not connected`);
+        }
+      } else {
+        socket.emit('error', response.message); // Emit error to the sender
+      }
     } catch (error) {
-      console.error('Error saving message:', error);
+      console.error('Error creating message:', error);
+      socket.emit('error', 'Internal Server Error');
     }
   });
-  // Event listener for disconnections
+  // Handle disconnections
   socket.on('disconnect', () => {
     console.log('Client disconnected');
+    // Remove user from connection map
+    for (const [userId, socketId] of Object.entries(userConnections)) {
+      if (socketId === socket.id) {
+        delete userConnections[userId];
+        console.log(`User ${userId} disconnected`);
+        break;
+      }
+    }
   });
 });
 
