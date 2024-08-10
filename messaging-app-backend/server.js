@@ -26,6 +26,12 @@ app.use(user);
 app.use(messages);
 // User connection map
 const userConnections = {};
+// Endpoint to get all online users
+app.get('/users/v1/online-users', (req, res) => {
+  const usersOnline = Object.keys(userConnections);
+  // get the online users
+  res.json(usersOnline);
+});
 
 // Create a new instance of the socket.io server
 const io = new Server(server, {
@@ -49,6 +55,7 @@ io.on('connection', (socket) => {
   socket.on('register', (userId) => {
     userConnections[userId] = socket.id;
     console.log(`User ${userId} connected with socket ID ${socket.id}`);
+    io.emit('userStatus', { userId, status: 'online' });
   });
 
   // Handle incoming messages
@@ -74,6 +81,7 @@ io.on('connection', (socket) => {
       socket.emit('error', 'Internal Server Error');
     }
   });
+
   // Handle disconnections
   socket.on('disconnect', () => {
     console.log('Client disconnected');
@@ -81,6 +89,8 @@ io.on('connection', (socket) => {
     for (const [userId, socketId] of Object.entries(userConnections)) {
       if (socketId === socket.id) {
         delete userConnections[userId];
+        // I need to emit the userStatus event to all connected users
+        io.emit('userStatus', { userId, status: 'offline' });
         console.log(`User ${userId} disconnected`);
         break;
       }
