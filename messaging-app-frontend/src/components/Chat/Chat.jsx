@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import { userStore } from "../../UserStore";
+import axios from "axios";
+import "./Chat.css";
 
 const Chat = () => {
   // State variables for the message input and messages
@@ -10,6 +12,23 @@ const Chat = () => {
   // Get the current user and the reciepient user from the user store
   const currentUser = userStore.getCurrentUser;
   const reciepientUser = userStore.getReciepientUser;
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:5001/message/v1/getMessage", {
+        params: {
+          userId: currentUser.id,
+          endUserId: reciepientUser.id,
+        },
+      })
+      .then((response) => {
+        console.log("messages", response.data);
+        setMessages(response.data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, []);
 
   useEffect(() => {
     // Establish socket connection
@@ -76,7 +95,16 @@ const Chat = () => {
         userId: currentUser.id, // Include the test user ID here
         endUserID: reciepientUser.id,
       };
-
+      // Update messages with sent message
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        {
+          message: message,
+          fromUserId: currentUser.id,
+          endUserID: reciepientUser.id,
+        },
+      ]);
+      console.log("messageObj", messages);
       // Send message to server
       socket.emit("message", messageObj);
       // Reset message input
@@ -89,7 +117,14 @@ const Chat = () => {
       <div>
         {/* Display previous messages */}
         {messages.map((msg, index) => (
-          <div key={index}>{msg}</div>
+          <div
+            key={index}
+            className={`${
+              msg.fromUserId === currentUser.id ? "from-me" : "from-them"
+            }`}
+          >
+            {msg.message}
+          </div>
         ))}
       </div>
       {/* Input field for new message */}

@@ -1,0 +1,11 @@
+.from-me {
+    align-self: flex-start;
+    background-color: #DCF8C6; /* Light green */
+    text-align: left;
+  }
+  
+  .from-them {
+    align-self: flex-end;
+    background-color: #F1F0F0; /* Light gray */
+    text-align: right;
+  }
