@@ -26,6 +26,14 @@ router.get("/user/v1/getAllUsers", async (req, res) => {
 });
 
 // Get user by ID
+router.get("/user/v1/getUserById/:id", async (req, res) => {
+    // Get the user ID from the request parameters
+    const userId = req.params.id;
+    // Get the user from the database
+    const userById = await user.getUserById(userId);
+    // Return the user object
+    res.status(userById.status).send(userById.data);
+});
 
 // Update user
 

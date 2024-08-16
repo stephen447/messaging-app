@@ -3,6 +3,7 @@ import { makeAutoObservable } from 'mobx';
 class UserStore {
   currentUser = null;
   reciepientUser = null;
+  onlineUsers = [];
 
   constructor() {
     makeAutoObservable(this);
@@ -56,6 +57,22 @@ class UserStore {
      */
     get getReciepientUser() {
         return this.reciepientUser;
+    }
+
+    /**
+     * Set the list of online users
+     * @param {Array} users - The list of online users
+     */
+    setOnlineUsers(users) {
+      //console.log("Setting online users", users);
+      this.onlineUsers = users;
+    }
+    /**
+     * Get the list of online users
+     * @returns {Array} The list of online users
+     */
+    get getOnlineUsers() {
+        return this.onlineUsers; 
     }
 }
 

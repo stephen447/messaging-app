@@ -1,0 +1,9 @@
+.sender {
+    align-self: flex-start;
+    text-align: left;
+  }
+  
+  .reciepient {
+    align-self: flex-end;
+    text-align: right;
+  }

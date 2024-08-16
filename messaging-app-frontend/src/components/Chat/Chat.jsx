@@ -1,21 +1,25 @@
 import React, { useEffect, useState } from "react";
-import { io } from "socket.io-client";
-import { userStore } from "../../UserStore";
 import axios from "axios";
+import { userStore } from "../../UserStore";
 import "./Chat.css";
+import Message from "../Message/Message";
+import socketService from "../../socketService";
 
 const Chat = () => {
-  // State variables for the message input and messages
-  const [message, setMessage] = useState("");
-  const [messages, setMessages] = useState([]);
-  const [socket, setSocket] = useState(null);
-  const [onlineUsers, setOnlineUsers] = useState([]);
-  // Get the current user and the recipient user from the user store
+  // State vairables
+  const [message, setMessage] = useState(""); // The message to be sent
+  const [messages, setMessages] = useState([]); // The list of messages in the chat
+  const [socket, setSocket] = useState(null); // The socket instance
+
   const currentUser = userStore.getCurrentUser;
   const recipientUser = userStore.getReciepientUser;
 
-  // Fetch messages and online users
   useEffect(() => {
+    // Initialize the socket only once when the component mounts
+    const socketInstance = socketService.socket;
+    setSocket(socketInstance);
+
+    // Fetch messages for the current conversation
     axios
       .get("http://localhost:5001/message/v1/getMessage", {
         params: {
@@ -24,76 +28,31 @@ const Chat = () => {
         },
       })
       .then((response) => {
+        // set the messages in the state
         setMessages(response.data);
       })
       .catch((error) => {
         console.error(error);
       });
 
-    axios
-      .get("http://localhost:5001/users/v1/online-users")
-      .then((response) => {
-        setOnlineUsers(response.data);
-      });
-  }, [currentUser.id, recipientUser.id]);
-
-  // Handle socket connections and events
-  useEffect(() => {
-    const newSocket = io("http://localhost:5001", {
-      reconnection: true,
-      reconnectionAttempts: Infinity,
-      reconnectionDelay: 1000,
-      reconnectionDelayMax: 5000,
-      timeout: 20000,
-    });
-    setSocket(newSocket);
-
-    newSocket.on("connect", () => {
-      registerUser(currentUser.id);
-    });
-
-    newSocket.on("disconnect", () => {
-      console.log("Disconnected from server");
-    });
-
-    newSocket.on("userStatus", (data) => {
-      console.log(`User ${data.userId} is ${data.status}`);
-
-      setOnlineUsers((prevUsers) => {
-        if (data.status === "online") {
-          if (!prevUsers.includes(data.userId)) {
-            const updatedUsers = [...prevUsers, data.userId];
-            return updatedUsers;
-          }
-        } else if (data.status === "offline") {
-          let updatedU = onlineUsers;
-          updatedU = updatedU.filter((userId) => userId !== data.userId);
-          return updatedU;
-        }
-        return prevUsers;
-      });
-    });
-
-    newSocket.on("message", (message) => {
+    // Handle socket events for when a message is sent to the user
+    socketInstance.on("message", (message) => {
+      // Add it to the list of messages
       setMessages((prevMessages) => [...prevMessages, message]);
     });
+  }, [currentUser.id, recipientUser.id]); // Dependency array to ensure useEffect only runs when these IDs change
 
-    const registerUser = (userId) => {
-      newSocket.emit("register", userId);
-    };
-
-    return () => {
-      newSocket.disconnect();
-    };
-  }, [currentUser.id]);
-
+  // Function to send a message
   const sendMessage = () => {
-    if (socket) {
+    // Check if the socket exists and the message is not empty
+    if (socket && message.trim() !== "") {
+      // Create a message object
       const messageObj = {
         content: message,
         userId: currentUser.id,
         endUserID: recipientUser.id,
       };
+      // Add the message to the list of messages
       setMessages((prevMessages) => [
         ...prevMessages,
         {
@@ -102,32 +61,32 @@ const Chat = () => {
           endUserID: recipientUser.id,
         },
       ]);
+      // Emit the message to the server
       socket.emit("message", messageObj);
+      // Clear the message input
       setMessage("");
     }
   };
 
   return (
-    <div>
-      <div>
-        {messages.map((msg, index) => (
-          <div
-            key={index}
-            className={`${
-              msg.fromUserId === currentUser.id ? "from-me" : "from-them"
-            }`}
-          >
-            {msg.message}
-          </div>
-        ))}
-      </div>
+    <>
+      <h1>{recipientUser.username}</h1>
+      {messages.map((message, index) => (
+        <Message
+          key={index}
+          message={message}
+          reciepient={
+            message.fromUserId === userStore.getCurrentUser.id ? false : true
+          }
+        />
+      ))}
       <input
         type="text"
         value={message}
         onChange={(e) => setMessage(e.target.value)}
       />
       <button onClick={sendMessage}>Send</button>
-    </div>
+    </>
   );
 };
 

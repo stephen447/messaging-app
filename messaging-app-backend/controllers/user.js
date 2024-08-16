@@ -52,3 +52,21 @@ export async function createUser(username) {
         return {status: 500, message: 'Internal Server Error'};
     }
 }
+/**
+ * Get a user by their ID.
+ * @param {number} userId - The ID of the user to retrieve.
+ * @returns {Object} Status Code and the retrieved user object.
+ */
+export async function getUserById(userId) {
+    try {
+        // Get the user from the database
+        const user = await User.findByPk(userId);
+        if (!user) {
+            return { status: 404, message: 'User not found' };
+        }
+        return { status: 200, message: 'User retrieved successfully', data: user };
+    } catch (error) {
+        console.error('Error retrieving user:', error);
+        return { status: 500, message: 'Internal Server Error' };
+    }
+}

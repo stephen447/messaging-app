@@ -3,6 +3,7 @@ import axios from "axios";
 import { observer } from "mobx-react-lite";
 import { useNavigate } from "react-router-dom";
 import { userStore } from "../../UserStore";
+import socketService from "../../socketService";
 const Login = observer(() => {
   // Send API request to get a list of users
   const [users, setUsers] = useState([]);
@@ -39,6 +40,7 @@ const Login = observer(() => {
     const user = users.find((u) => u.username === userName);
     if (user) {
       userStore.setCurrentUser(user);
+      socketService.socket.emit("register", user.id);
       navigate("/users");
     }
   };
