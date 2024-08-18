@@ -5,6 +5,8 @@ import { useNavigate } from "react-router-dom";
 import UsersListItem from "../UsersListItem/UsersListItem";
 import { observer } from "mobx-react-lite";
 import socketService from "../../socketService";
+import Header from "../Header/Header";
+import "./Users.css";
 
 const Users = observer(() => {
   // State variables
@@ -104,26 +106,30 @@ const Users = observer(() => {
 
   return (
     <div>
-      <h1>Users</h1>
+      <Header />
       {loading ? (
         <p>Loading...</p>
       ) : error ? (
         <p>Error: {error.message}</p>
       ) : (
-        <>
-          <h2>Online</h2>
-          {onlineUsers.map((user) => (
-            <UsersListItem key={user.id} user={user} online={true} />
-          ))}
-          <h2>Offline</h2>
-          {users
-            .filter(
-              (u) => !onlineUsers.some((onlineUser) => onlineUser.id === u.id)
-            )
-            .map((user) => (
-              <UsersListItem key={user.id} user={user} online={false} />
+        <div className="users__container">
+          <div style={{ width: "100%" }}>
+            <h2 className="primary-text">Online</h2>
+            {onlineUsers.map((user) => (
+              <UsersListItem key={user.id} user={user} online={true} />
             ))}
-        </>
+          </div>
+          <div style={{ width: "100%" }}>
+            <h2 className="primary-text">Offline</h2>
+            {users
+              .filter(
+                (u) => !onlineUsers.some((onlineUser) => onlineUser.id === u.id)
+              )
+              .map((user) => (
+                <UsersListItem key={user.id} user={user} online={false} />
+              ))}
+          </div>
+        </div>
       )}
     </div>
   );

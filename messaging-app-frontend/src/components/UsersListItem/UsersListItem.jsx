@@ -19,7 +19,9 @@ const UsersListItem = ({ user, online }) => {
   };
   return (
     <div>
-      <button onClick={setUser}>{user.username}</button>
+      <button className="user__button" onClick={setUser}>
+        {user.username}
+      </button>
     </div>
   );
 };

@@ -1,38 +1,73 @@
-.App {
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&display=swap');
+
+/* Base Theme Variables */
+:root {
+  --background-color: #b14747;
+  --text-color: #000000;
+  --primary-color: #007bff;
+  --secondary-color: #6c757d;
+}
+
+/* Dark Mode Variables */
+[data-theme="dark"] {
+  
+  --background-color: #371400;
+  --secondary-color: #ffc400;
+  --primary-color: #644117;
+}
+
+/* Light Mode Variables */
+[data-theme="light"] {
+  --background-color: #ffc400;
+  --primary-color: #644117 ;
+  --secondary-color: #371400;
+  
+}
+*{
+  font-family: 'Oswald', sans-serif;
+}
+/* Apply Theme Variables */
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+.primary-text {
+  color: var(--primary-color);
+  padding: 1%;
+}
+.container{
   text-align: center;
+  padding: 5%;
 }
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.primary__select {
+  background-color: var(--background-color);
+  color: var(--secondary-color);
+  border: var(--secondary-color) 1px solid;
+  border-radius: 3px;
+  padding: 1%;
+  outline: none;
 }
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.user__button {
+  background-color: var(--primary-color);
+  color: var(--secondary-color);
+  border: none;
+  border-radius: 5px;
+  padding: 2% 3%;
+  cursor: pointer;
+  height: 100%;
+  min-width: 25%;
 }
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+.user__button:hover {
+  background-color: var(--secondary-color);
+  color: var(--primary-color);
 }
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.input{
+  background-color: var(--background-color);
+  color: var(--secondary-color);
+  border: var(--secondary-color) 1px solid;
+  width: 50%;
+  padding: 1%;
+  border-radius: 5px;
+  outline: none;
+  height: 100%;
 }

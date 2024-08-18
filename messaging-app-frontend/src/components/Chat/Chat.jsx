@@ -4,6 +4,7 @@ import { userStore } from "../../UserStore";
 import "./Chat.css";
 import Message from "../Message/Message";
 import socketService from "../../socketService";
+import Header from "../Header/Header";
 
 const Chat = () => {
   // State vairables
@@ -70,22 +71,30 @@ const Chat = () => {
 
   return (
     <>
-      <h1>{recipientUser.username}</h1>
-      {messages.map((message, index) => (
-        <Message
-          key={index}
-          message={message}
-          reciepient={
-            message.fromUserId === userStore.getCurrentUser.id ? false : true
-          }
+      <Header />
+      <h1 className="primary-text chat__heading">{recipientUser.username}</h1>
+      <div className="chat-messages__container">
+        {messages.map((message, index) => (
+          <Message
+            key={index}
+            message={message}
+            reciepient={
+              message.fromUserId === userStore.getCurrentUser.id ? false : true
+            }
+          />
+        ))}
+      </div>
+      <div className="chat-input__container">
+        <input
+          type="text"
+          className="input"
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
         />
-      ))}
-      <input
-        type="text"
-        value={message}
-        onChange={(e) => setMessage(e.target.value)}
-      />
-      <button onClick={sendMessage}>Send</button>
+        <button className="send__button" onClick={sendMessage}>
+          Send
+        </button>
+      </div>
     </>
   );
 };

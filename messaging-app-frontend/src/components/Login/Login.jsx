@@ -4,6 +4,7 @@ import { observer } from "mobx-react-lite";
 import { useNavigate } from "react-router-dom";
 import { userStore } from "../../UserStore";
 import socketService from "../../socketService";
+import Header from "../Header/Header";
 const Login = observer(() => {
   // Send API request to get a list of users
   const [users, setUsers] = useState([]);
@@ -34,8 +35,10 @@ const Login = observer(() => {
   }, []);
 
   const setUser = (event) => {
+    console.log("setting user");
     // Get the user from the button
-    const userName = event.target.innerText;
+    const userName = event.target.value;
+    console.log(userName);
     // Get the id from the user object
     const user = users.find((u) => u.username === userName);
     if (user) {
@@ -47,20 +50,29 @@ const Login = observer(() => {
 
   return (
     <div>
-      <h1>Login</h1>
+      <Header />
       {/*List of buttons to select a user*/}
       {loading ? (
         <p>Loading...</p>
       ) : error ? (
         <p>Error: {error.message}</p>
       ) : (
-        <div>
-          <p>Select a user:</p>
-          {users.map((user) => (
-            <button key={user.id} onClick={setUser}>
-              {user.username}
-            </button>
-          ))}
+        <div className="container">
+          <label className="primary-text" htmlFor="user-select">
+            Choose a user to login
+          </label>
+          <select
+            id="user-select"
+            className="primary__select"
+            onChange={setUser}
+          >
+            <option value="">--Please choose a user--</option>
+            {users.map((user) => (
+              <option key={user.id} value={user.username}>
+                {user.username}
+              </option>
+            ))}
+          </select>
         </div>
       )}
     </div>

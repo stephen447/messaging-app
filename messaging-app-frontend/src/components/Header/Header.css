@@ -1,0 +1,17 @@
+.header__container {
+    display: flex;
+    justify-content: start;
+    background-color: var(--primary-color);
+    justify-content: space-between;
+    
+}
+
+.header__button{
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
+    border: none;
+    padding: 2% 3%;
+    cursor: pointer;
+    height: 100%;
+    min-width: 10%;
+}
