@@ -12,7 +12,7 @@ const server = createServer(app);
 
 // CORS configuration - allow requests from your frontend server
 const corsOptions = {
-  origin: ['http://localhost:3000', 'https://messaging-app-m9gy.onrender.com/'],  // Allow requests from your frontend server
+  origin: 'https://messaging-app-m9gy.onrender.com/',  // Allow requests from your frontend server
   optionsSuccessStatus: 200,        
 };
 // Enable CORS map
