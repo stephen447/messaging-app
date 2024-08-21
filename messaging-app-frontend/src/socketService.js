@@ -7,8 +7,8 @@ class SocketService {
     }
 
     connect() {
-        console.log(process.env.REACT_APP_URL);
-        this.socket = io(process.env.REACT_APP_URL,{
+        console.log(process.env.REACT_APP_API_URL);
+        this.socket = io(process.env.REACT_APP_API_URL,{
             reconnection: true,
             reconnectionAttempts: Infinity,
             reconnectionDelay: 1000,
