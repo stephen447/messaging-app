@@ -21,7 +21,7 @@ const Users = observer(() => {
       try {
         // Make a GET request to the backend API to get all users
         const response = await axios.get(
-          "http://localhost:5001/user/v1/getAllUsers"
+          process.env.REACT_APP_API_URL + "/user/v1/getAllUsers"
         );
         // Filter out the current user from the list
         const filteredUsers = response.data.filter(
@@ -44,13 +44,13 @@ const Users = observer(() => {
       try {
         // Fetches the online userIDs
         const response = await axios.get(
-          "http://localhost:5001/users/v1/online-users"
+          process.env.REACT_APP_API_URL + "/users/v1/online-users"
         );
         // Fetch the user objects for the online users IDs
         const users = await Promise.all(
           response.data.map(async (userId) => {
             const userResponse = await axios.get(
-              "http://localhost:5001/user/v1/getUserById/" + userId
+              process.env.REACT_APP_API_URL + "/user/v1/getUserById/" + userId
             );
             return userResponse.data;
           })
@@ -72,7 +72,7 @@ const Users = observer(() => {
       console.log(`User ${data.userId} is ${data.status}`);
       // Get the user object for the user ID
       const response = await axios.get(
-        "http://localhost:5001/user/v1/getUserById/" + data.userId
+        process.env.REACT_APP_API_URL + "/user/v1/getUserById/" + data.userId
       );
       const userObj = response.data;
       // Update the online users

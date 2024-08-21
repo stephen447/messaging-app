@@ -18,7 +18,7 @@ const Login = observer(() => {
       try {
         // Make a GET request to the backend API
         const response = await axios.get(
-          "http://localhost:5001/user/v1/getAllUsers"
+          process.env.REACT_APP_API_URL + "/user/v1/getAllUsers"
         );
         // Update the state with the fetched users
         setUsers(response.data);

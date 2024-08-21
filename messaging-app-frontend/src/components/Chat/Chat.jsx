@@ -22,7 +22,7 @@ const Chat = () => {
 
     // Fetch messages for the current conversation
     axios
-      .get("http://localhost:5001/message/v1/getMessage", {
+      .get(process.env.REACT_APP_URL + "/message/v1/getMessage", {
         params: {
           userId: currentUser.id,
           endUserId: recipientUser.id,
