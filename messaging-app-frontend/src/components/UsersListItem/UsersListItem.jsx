@@ -9,7 +9,7 @@ const UsersListItem = ({ user, online }) => {
     // Get the user from the button
     const userName = event.target.innerText;
     // Get the id from the user object
-    const users = userStore.getOnlineUsers;
+    const users = userStore.getAllUsers();
     // Search an array of maps
     const user = users.find((u) => u.username === userName);
     if (user) {

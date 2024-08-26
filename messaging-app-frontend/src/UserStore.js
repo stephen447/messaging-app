@@ -4,6 +4,7 @@ class UserStore {
   currentUser = null;
   reciepientUser = null;
   onlineUsers = [];
+  allUsers = [];
 
   constructor() {
     makeAutoObservable(this);
@@ -66,6 +67,14 @@ class UserStore {
     setOnlineUsers(users) {
       //console.log("Setting online users", users);
       this.onlineUsers = users;
+    }
+
+    setAllUsers(users) {
+      this.allUsers = users;
+    }
+
+    getAllUsers() {
+      return this.allUsers;
     }
     /**
      * Get the list of online users

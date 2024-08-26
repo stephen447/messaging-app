@@ -20,6 +20,8 @@ const Login = observer(() => {
         const response = await axios.get(
           process.env.REACT_APP_API_URL + "/user/v1/getAllUsers"
         );
+        // Save the users in the datastore
+        userStore.setAllUsers(response.data);
         // Update the state with the fetched users
         setUsers(response.data);
       } catch (err) {
