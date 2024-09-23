@@ -13,7 +13,7 @@ const Header = () => {
   return (
     <header className="header__container">
       <button className="header__button" onClick={goHome}>
-        Home
+        <h2>Home</h2>
       </button>
       <ThemeToggle />
     </header>

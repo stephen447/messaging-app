@@ -2,10 +2,6 @@
 
 /* Base Theme Variables */
 :root {
-  --background-color: #b14747;
-  --text-color: #000000;
-  --primary-color: #007bff;
-  --secondary-color: #6c757d;
 }
 
 /* Dark Mode Variables */
@@ -37,7 +33,6 @@ body {
 }
 .container{
   text-align: center;
-  padding: 5%;
 }
 .primary__select {
   background-color: var(--background-color);

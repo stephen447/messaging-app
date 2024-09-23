@@ -7,6 +7,7 @@ import { observer } from "mobx-react-lite";
 import socketService from "../../socketService";
 import Header from "../Header/Header";
 import "./Users.css";
+import Footer from "../Footer/Footer";
 
 const Users = observer(() => {
   // State variables
@@ -131,6 +132,7 @@ const Users = observer(() => {
           </div>
         </div>
       )}
+      <Footer />
     </div>
   );
 });

@@ -1,0 +1,49 @@
+.footer {
+    display: flex;
+    justify-content: space-evenly; /* Ensure elements are spaced evenly */
+    align-items: center;           /* Vertically center the content */
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
+    width: 100%;
+    height: auto;                  /* Let height adjust based on content */
+    padding: 20px 0;               /* Add some padding */
+    box-sizing: border-box;
+    flex-wrap: wrap;               /* Allows content to wrap if needed */
+  }
+  
+  .footer__header {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 10px;
+  }
+  
+  .socialElement {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;                       /* Let elements expand to fill available space */
+    min-width: 150px;              /* Ensure the social elements don't get too narrow */
+    margin: 10px;                  /* Add margin around social elements */
+  }
+  
+  .socialIcons {
+    width: 40px;                   /* Limit icon size */
+    height: auto;
+    margin: 5px;
+  }
+  
+  .socialIcons:hover {
+    transform: scale(1.1);         /* Scale on hover */
+    transition: transform 0.2s ease-in-out;
+  }
+  
+  @media screen and (max-width: 600px) {
+    .footer {
+      flex-direction: column;      /* Stack elements vertically on small screens */
+    }
+  
+    .socialElement {
+      margin-bottom: 10px;
+    }
+  }
+  

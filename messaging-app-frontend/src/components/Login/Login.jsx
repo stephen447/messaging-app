@@ -5,6 +5,8 @@ import { useNavigate } from "react-router-dom";
 import { userStore } from "../../UserStore";
 import socketService from "../../socketService";
 import Header from "../Header/Header";
+import Footer from "../Footer/Footer";
+import "./Login.css";
 const Login = observer(() => {
   // Send API request to get a list of users
   const [users, setUsers] = useState([]);
@@ -51,7 +53,7 @@ const Login = observer(() => {
   };
 
   return (
-    <div>
+    <div className="login__container">
       <Header />
       {/*List of buttons to select a user*/}
       {loading ? (
@@ -59,23 +61,27 @@ const Login = observer(() => {
       ) : error ? (
         <p>Error: {error.message}</p>
       ) : (
-        <div className="container">
-          <label className="primary-text" htmlFor="user-select">
-            Choose a user to login
-          </label>
-          <select
-            id="user-select"
-            className="primary__select"
-            onChange={setUser}
-          >
-            <option value="">--Please choose a user--</option>
-            {users.map((user) => (
-              <option key={user.id} value={user.username}>
-                {user.username}
-              </option>
-            ))}
-          </select>
-        </div>
+        <>
+          <div className="login__container--inputs container">
+            <h1 className="primary-text">Login</h1>
+            <label className="primary-text" htmlFor="user-select">
+              Choose a user to login
+            </label>
+            <select
+              id="user-select"
+              className="primary__select"
+              onChange={setUser}
+            >
+              <option value="">--Please choose a user--</option>
+              {users.map((user) => (
+                <option key={user.id} value={user.username}>
+                  {user.username}
+                </option>
+              ))}
+            </select>
+          </div>
+          <Footer />
+        </>
       )}
     </div>
   );
