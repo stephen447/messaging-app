@@ -7,12 +7,26 @@ import socketService from "../../socketService";
 import Header from "../Header/Header";
 import Footer from "../Footer/Footer";
 import "./Login.css";
+import Loader from "../Loader/Loader";
+import WarningPopUp from "../WarningPopUp/WarningPopUp";
 const Login = observer(() => {
   // Send API request to get a list of users
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+
+  const [showPopup, setShowPopup] = useState(false);
+
+  // Show popup on first page load
+  useEffect(() => {
+    setShowPopup(true);
+  }, []);
+
+  // Function to close the popup
+  const handleClosePopup = () => {
+    setShowPopup(false);
+  };
 
   useEffect(() => {
     // Define the function to fetch users
@@ -57,7 +71,10 @@ const Login = observer(() => {
       <Header />
       {/*List of buttons to select a user*/}
       {loading ? (
-        <p>Loading...</p>
+        <>
+          <Loader />
+          {showPopup && <WarningPopUp handleClose={handleClosePopup} />}
+        </>
       ) : error ? (
         <p>Error: {error.message}</p>
       ) : (

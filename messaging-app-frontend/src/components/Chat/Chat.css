@@ -35,8 +35,12 @@
     text-align: right;
   }
   .chat-messages__container{
-    max-height: 50vh;
+    max-height: 40vh;
     overflow-y: scroll;
+  }
+
+  .chat-messages__container::-webkit-scrollbar {
+    display: none;
   }
 .send__button{
     background-color: var(--primary-color);

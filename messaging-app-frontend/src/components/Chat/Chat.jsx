@@ -5,6 +5,7 @@ import "./Chat.css";
 import Message from "../Message/Message";
 import socketService from "../../socketService";
 import Header from "../Header/Header";
+import Footer from "../Footer/Footer";
 
 const Chat = () => {
   // State vairables
@@ -95,6 +96,7 @@ const Chat = () => {
           Send
         </button>
       </div>
+      <Footer />
     </>
   );
 };

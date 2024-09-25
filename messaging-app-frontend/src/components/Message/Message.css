@@ -3,7 +3,49 @@
     text-align: left;
   }
   
-  .reciepient {
-    align-self: flex-end;
-    text-align: right;
-  }
+.reciepient {
+  align-self: flex-end;
+  text-align: right;
+}
+
+.tooltip-sender {
+  visibility: hidden;
+  width: 200px;
+  color: var(--primary-color);
+  text-align: center;
+  padding: 5px 10px;
+  border-radius: 6px;
+  /* Positioning */
+  position: absolute;
+  bottom: 50%; /* Adjust depending on the message location */
+  left: 100%;
+  transform: translateY(50%);
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.tooltip-reciepient {
+  visibility: hidden;
+  width: 200px;
+  color: var(--primary-color);
+  text-align: center;
+  padding: 5px 10px;
+  border-radius: 6px;
+  /* Positioning */
+  position: absolute;
+  bottom: 50%; /* Adjust depending on the message location */
+  right: 100%;
+  transform: translateY(50%);
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.message-bubble:hover .tooltip-sender {
+visibility: visible;
+opacity: 1;
+}
+.message-bubble:hover .tooltip-reciepient {
+visibility: visible;
+opacity: 1;
+}

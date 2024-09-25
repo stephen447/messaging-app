@@ -8,6 +8,7 @@ import socketService from "../../socketService";
 import Header from "../Header/Header";
 import "./Users.css";
 import Footer from "../Footer/Footer";
+import Loader from "../Loader/Loader";
 
 const Users = observer(() => {
   // State variables
@@ -109,7 +110,7 @@ const Users = observer(() => {
     <div>
       <Header />
       {loading ? (
-        <p>Loading...</p>
+        <Loader />
       ) : error ? (
         <p>Error: {error.message}</p>
       ) : (
