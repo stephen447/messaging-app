@@ -1,102 +1,92 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { userStore } from "../../UserStore";
-import { useNavigate } from "react-router-dom";
 import UsersListItem from "../UsersListItem/UsersListItem";
 import { observer } from "mobx-react-lite";
 import socketService from "../../socketService";
 import Header from "../Header/Header";
-import "./Users.css";
 import Footer from "../Footer/Footer";
 import Loader from "../Loader/Loader";
+import "./Users.css";
 
 const Users = observer(() => {
   // State variables
-  const [users, setUsers] = useState([]); // The list of users
+  const [users, setUsers] = useState([]); // List of users
   const [loading, setLoading] = useState(true); // Loading state
   const [error, setError] = useState(null); // Error state
-  const [onlineUsers, setOnlineUsers] = useState([]); // List of online users
   const user = userStore.getCurrentUser; // Get the current user
 
+  // Function to update the online status of a specific user
+  const updateOnlineStatus = (userId, newStatus) => {
+    setUsers((prevUsers) =>
+      prevUsers.map((user) =>
+        user.userId === userId ? { ...user, online: newStatus } : user
+      )
+    );
+  };
+
+  // Fetch last messages between the current user and all other users
   useEffect(() => {
-    const fetchUsers = async () => {
+    const getLastMessages = async () => {
       try {
-        // Make a GET request to the backend API to get all users
         const response = await axios.get(
-          process.env.REACT_APP_API_URL + "/user/v1/getAllUsers"
+          `${process.env.REACT_APP_API_URL}/message/v1/getLastMessage?userId=${user.id}`
         );
-        // Filter out the current user from the list
-        const filteredUsers = response.data.filter(
-          (u) => u.username !== user.username
-        );
-        // Update the state with the filtered users
-        setUsers(filteredUsers);
+        setUsers(response.data);
       } catch (err) {
         setError(err);
+        console.error("Failed to fetch last messages", err);
       } finally {
         setLoading(false);
       }
     };
-    fetchUsers();
-  }, [user.username]);
+    getLastMessages();
+  }, [user.id]);
 
+  // Fetch online users and update their status
   useEffect(() => {
-    // Function to fetch online users
     const fetchOnlineUsers = async () => {
       try {
-        // Fetches the online userIDs
         const response = await axios.get(
-          process.env.REACT_APP_API_URL + "/users/v1/online-users"
+          `${process.env.REACT_APP_API_URL}/users/v1/online-users`
         );
-        // Fetch the user objects for the online users IDs
-        const users = await Promise.all(
+        const onlineUsers = await Promise.all(
           response.data.map(async (userId) => {
             const userResponse = await axios.get(
-              process.env.REACT_APP_API_URL + "/user/v1/getUserById/" + userId
+              `${process.env.REACT_APP_API_URL}/user/v1/getUserById/${userId}`
             );
             return userResponse.data;
           })
         );
-        // Update the state with the online users
-        setOnlineUsers(users);
-        // Update the user store with the online users
-        userStore.setOnlineUsers(users);
+
+        onlineUsers.forEach((onlineUser) => {
+          const foundUser = users.find(
+            (u) => u.username === onlineUser.username
+          );
+          if (foundUser) {
+            updateOnlineStatus(foundUser.userId, true);
+          }
+        });
+
+        //userStore.setOnlineUsers(users);
       } catch (err) {
         console.error("Failed to fetch online users", err);
       }
     };
     fetchOnlineUsers();
-  }, []);
+  }, [users]);
 
+  // Handle socket events for user status changes
   useEffect(() => {
-    // Function to handle user status changes
     const handleUserStatus = async (data) => {
-      console.log(`User ${data.userId} is ${data.status}`);
-      // Get the user object for the user ID
-      const response = await axios.get(
-        process.env.REACT_APP_API_URL + "/user/v1/getUserById/" + data.userId
-      );
-      const userObj = response.data;
-      // Update the online users
-      setOnlineUsers((prevUsers) => {
-        if (data.status === "online") {
-          // Check if the user is already in the list
-          if (!prevUsers.some((user) => user.id === userObj.id)) {
-            const updatedUsers = [...prevUsers, userObj];
-            userStore.setOnlineUsers(updatedUsers);
-            return updatedUsers;
-          }
-        } else if (data.status === "offline") {
-          // Remove the user from the list
-          const updatedUsers = prevUsers.filter(
-            (user) => user.id !== userObj.id
-          );
-          // Update the user store
-          userStore.setOnlineUsers(updatedUsers);
-          return updatedUsers;
-        }
-        return prevUsers;
-      });
+      try {
+        const response = await axios.get(
+          `${process.env.REACT_APP_API_URL}/user/v1/getUserById/${data.userId}`
+        );
+        updateOnlineStatus(response.data.userId, data.status);
+      } catch (err) {
+        console.error("Error fetching user status", err);
+      }
     };
 
     socketService.socket.on("userStatus", handleUserStatus);
@@ -116,20 +106,10 @@ const Users = observer(() => {
       ) : (
         <div className="users__container">
           <div style={{ width: "100%" }}>
-            <h2 className="primary-text">Online</h2>
-            {onlineUsers.map((user) => (
-              <UsersListItem key={user.id} user={user} online={true} />
+            <h2 className="primary-text">Users</h2>
+            {users.map((user) => (
+              <UsersListItem key={user.userId} user={user} />
             ))}
-          </div>
-          <div style={{ width: "100%" }}>
-            <h2 className="primary-text">Offline</h2>
-            {users
-              .filter(
-                (u) => !onlineUsers.some((onlineUser) => onlineUser.id === u.id)
-              )
-              .map((user) => (
-                <UsersListItem key={user.id} user={user} online={false} />
-              ))}
           </div>
         </div>
       )}
