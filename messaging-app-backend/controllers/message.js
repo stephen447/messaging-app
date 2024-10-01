@@ -81,7 +81,6 @@ export async function getLastMessages(userId) {
     let users = await user.getAllUsers();
     // Convert the object to an array
     users = users.data;
-    console.log(users);
     const messagesWithUsers = [];
 
     // Loop through all users and get the last message between userId and each user
