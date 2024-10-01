@@ -1,7 +1,9 @@
 // Functions for handling user related requests
 import db from '../models/index.js'; // Adjust the path as necessary
 const { User, Message } = db;
+import * as user from "../controllers/user.js";
 import { Op } from 'sequelize'; // Import Op from Sequelize
+
 /**
  * Save a new message to the database.
  * @param {string} content - The content of the message.
@@ -70,5 +72,55 @@ export async function getMessagesBetweenUsers(userId1, userId2) {
   } catch (error) {
     console.error('Error retrieving messages:', error);
     return { status: 500, message: 'Internal Server Error' };
+  }
+}
+
+export async function getLastMessages(userId) {
+  try {
+    // Get a list of all users 
+    let users = await user.getAllUsers();
+    // Convert the object to an array
+    users = users.data;
+    console.log(users);
+    const messagesWithUsers = [];
+
+    // Loop through all users and get the last message between userId and each user
+    for (const user of users) {
+      //exclude the user itself
+      if(user.id === userId){
+        continue;
+      }
+      const lastMessage = await Message.findOne({
+        where: {
+          [Op.or]: [
+            { fromUserId: userId, toUserId: user.id },
+            { fromUserId: user.id, toUserId: userId }
+          ]
+        },
+        order: [['createdAt', 'DESC']],
+        limit: 1
+      });
+      console.log(lastMessage);
+      // If a message exists, push it to the array along with the user details
+      messagesWithUsers.push({
+        username: user.username,
+        userId: user.id,
+        message: lastMessage ? lastMessage.dataValues.message : 'No message found', // Handle case where no message exists
+        createdAt: lastMessage ? lastMessage.createdAt : null,
+        online: false
+      });
+    }
+
+    return {
+      status: 200,
+      message: 'Messages retrieved successfully',
+      data: messagesWithUsers
+    };
+  } catch (error) {
+    console.error('Error retrieving messages:', error);
+    return {
+      status: 500,
+      message: 'Internal Server Error'
+    };
   }
 }
